@@ -15,4 +15,4 @@ export * from "./ui/pagination/Pagination";
 
 export * from "./provider/Provider";
 
-export * from "./ui/chatbot/ChatBot";
+export * from "./chatbot/ChatBot";

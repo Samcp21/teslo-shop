@@ -20,9 +20,9 @@ export default async function Home({ searchParams }: Props) {
       <Title title="Tienda" subtitle="Todos los productos" className="mb-2" />
       <ProductGrid products={products} />
       <Pagination totalPages={totalPages} />
-      <div className="sticky bottom-5">
+      {/* <div className="sticky bottom-5">
         <ChatBot />
-      </div>
+      </div> */}
     </>
   );
 }
