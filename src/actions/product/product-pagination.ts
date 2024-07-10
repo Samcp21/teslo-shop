@@ -30,6 +30,7 @@ export const getPaginatedProductsWithImages = async ({
           },
         },
       },
+      //! Por género
       where: {
         gender: gender,
       },
@@ -42,7 +43,7 @@ export const getPaginatedProductsWithImages = async ({
         gender: gender,
       },
     });
-    
+
     const totalPages = Math.ceil(totalCount / take);
 
     return {

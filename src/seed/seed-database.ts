@@ -1,11 +1,18 @@
-import { create } from "zustand";
-import { initialData } from "./seed";
 import prisma from "../lib/prisma";
+import { initialData } from "./seed";
+import { countries } from "./seed-countries";
 
 async function main() {
   // 1. Borrar registros previos
   // await Promise.all( [
+
+  await prisma.orderAddress.deleteMany();
+  await prisma.orderItem.deleteMany();
+  await prisma.order.deleteMany();
+
+  await prisma.userAddress.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.country.deleteMany();
 
   await prisma.productImage.deleteMany();
   await prisma.product.deleteMany();
@@ -16,6 +23,10 @@ async function main() {
 
   await prisma.user.createMany({
     data: users,
+  });
+
+  await prisma.country.createMany({
+    data: countries,
   });
 
   //  Categorias
@@ -30,10 +41,13 @@ async function main() {
 
   const categoriesDB = await prisma.category.findMany();
 
-  const categoriesMap = categoriesDB.reduce((map, category) => {
-    map[category.name.toLowerCase()] = category.id;
-    return map;
-  }, {} as Record<string, string>); //<string=shirt, string=categoryID>
+  const categoriesMap = categoriesDB.reduce(
+    (map, category) => {
+      map[category.name.toLowerCase()] = category.id;
+      return map;
+    },
+    {} as Record<string, string>
+  ); //<string=shirt, string=categoryID>
 
   // Productos
 

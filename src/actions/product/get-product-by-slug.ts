@@ -1,25 +1,36 @@
-import prisma from "@/lib/prisma";
+'use server';
 
-export const getProductBySlug = async (slug: string) => {
+import prisma from '@/lib/prisma';
+
+
+export const getProductBySlug = async( slug: string ) => {
+
+
   try {
+
     const product = await prisma.product.findFirst({
       include: {
-        ProductImage: {
-          select: {
-            url: true,
-          },
-        },
+        ProductImage: true
       },
       where: {
-        slug,
-      },
-    });
-    if (!product) throw new Error("Producto no encontrado");
+        slug: slug,
+      }
+    })
+
+
+    if ( !product ) return null;
+
     return {
       ...product,
-      images: product.ProductImage.map((image) => image.url),
+      images: product.ProductImage.map( image => image.url )
     };
+
+    
   } catch (error) {
-    throw new Error("Error al obtener producto por Slug");
+    console.log(error);
+    throw new Error('Error al obtener producto por slug');
   }
-};
+
+
+
+}

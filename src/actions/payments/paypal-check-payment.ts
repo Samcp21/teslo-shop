@@ -1,8 +1,8 @@
 "use server";
 
-import prisma from '@/lib/prisma';
-import { PayPalOrderStatusResponse } from '@/interfaces';
-import { revalidatePath } from 'next/cache';
+import prisma from "@/lib/prisma";
+import { PayPalOrderStatusResponse } from "@/interfaces";
+import { revalidatePath } from "next/cache";
 
 export const paypalCheckPayment = async (paypalTransactionId: string) => {
   const authToken = await getPayPalBearerToken();
@@ -14,57 +14,49 @@ export const paypalCheckPayment = async (paypalTransactionId: string) => {
     };
   }
 
-  const resp = await verifyPayPalPayment( paypalTransactionId, authToken );
+  const resp = await verifyPayPalPayment(paypalTransactionId, authToken);
 
-  if ( !resp ) {
+  if (!resp) {
     return {
       ok: false,
-      message: 'Error al verificar el pago'
-    }
+      message: "Error al verificar el pago",
+    };
   }
 
   const { status, purchase_units } = resp;
-  console.log({status, purchase_units});
+  console.log({ status, purchase_units });
   const { invoice_id: orderId } = purchase_units[0]; // TODO: invoice ID
 
-  if ( status !== 'COMPLETED' ) {
+  if (status !== "COMPLETED") {
     return {
       ok: false,
-      message: 'Aún no se ha pagado en PayPal'
-    }
+      message: "Aún no se ha pagado en PayPal",
+    };
   }
 
   // TODO: Realizar la actualización en nuestra base de datos
   try {
-
     await prisma.order.update({
       where: { id: orderId },
-      data:  {
+      data: {
         isPaid: true,
-        paidAt: new Date()
-      }
-    })
-
+        paidAt: new Date(),
+      },
+    });
 
     // TODO: Revalidar un path
-    revalidatePath(`/orders/${ orderId }`);
+    revalidatePath(`/orders/${orderId}`);
 
     return {
-      ok: true
-    }
-
-    
+      ok: true,
+    };
   } catch (error) {
     console.log(error);
     return {
       ok: false,
-      message: '500 - El pago no se pudo realizar'
-    }
+      message: "500 - El pago no se pudo realizar",
+    };
   }
-
-
-
-
 };
 
 const getPayPalBearerToken = async (): Promise<string | null> => {
@@ -93,7 +85,7 @@ const getPayPalBearerToken = async (): Promise<string | null> => {
   try {
     const result = await fetch(oauth2Url, {
       ...requestOptions,
-      cache: 'no-store'
+      cache: "no-store",
     }).then((r) => r.json());
     return result.access_token;
   } catch (error) {
@@ -105,15 +97,11 @@ const getPayPalBearerToken = async (): Promise<string | null> => {
 const verifyPayPalPayment = async (
   paypalTransactionId: string,
   bearerToken: string
-): Promise<PayPalOrderStatusResponse|null>  => {
-
-  const paypalOrderUrl = `${ process.env.PAYPAL_ORDERS_URL }/${ paypalTransactionId }`;
+): Promise<PayPalOrderStatusResponse | null> => {
+  const paypalOrderUrl = `${process.env.PAYPAL_ORDERS_URL}/${paypalTransactionId}`;
 
   const myHeaders = new Headers();
-  myHeaders.append(
-    "Authorization",
-    `Bearer ${ bearerToken }`
-  );
+  myHeaders.append("Authorization", `Bearer ${bearerToken}`);
 
   const requestOptions = {
     method: "GET",
@@ -123,14 +111,12 @@ const verifyPayPalPayment = async (
   try {
     const resp = await fetch(paypalOrderUrl, {
       ...requestOptions,
-      cache: 'no-store'
-    }).then( r => r.json() );
-    console.log({resp});
+      cache: "no-store",
+    }).then((r) => r.json());
+    console.log({ resp });
     return resp;
-    
   } catch (error) {
     console.log(error);
     return null;
   }
-
 };
