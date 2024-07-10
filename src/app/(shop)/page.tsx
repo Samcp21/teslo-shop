@@ -1,6 +1,7 @@
 import { Pagination, ProductGrid, Title } from "@/components";
 import { getPaginatedProductsWithImages } from "@/actions";
 import { redirect } from "next/navigation";
+import MonitorStarter from "@/components/monitor/MonitorStarter";
 
 interface Props {
   searchParams: {
@@ -20,6 +21,7 @@ export default async function Home({ searchParams }: Props) {
       <Title title="Tienda" subtitle="Todos los productos" className="mb-2" />
       <ProductGrid products={products} />
       <Pagination totalPages={totalPages} />
+      <MonitorStarter />
       {/* <div className="sticky bottom-5">
         <ChatBot />
       </div> */}
