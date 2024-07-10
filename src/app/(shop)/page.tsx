@@ -1,4 +1,4 @@
-import { ChatBot, Pagination, ProductGrid, Title } from "@/components";
+import { Pagination, ProductGrid, Title } from "@/components";
 import { getPaginatedProductsWithImages } from "@/actions";
 import { redirect } from "next/navigation";
 
