@@ -1,7 +1,6 @@
-import { Pagination, ProductGrid, Title } from "@/components";
+import { MonitorStarter, Pagination, ProductGrid, Title } from "@/components";
 import { getPaginatedProductsWithImages } from "@/actions";
 import { redirect } from "next/navigation";
-import MonitorStarter from "@/components/monitor/MonitorStarter";
 
 interface Props {
   searchParams: {

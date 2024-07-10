@@ -1,59 +1,24 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
-let retries = 0;
-const maxRetries = 3;
-const interval = 60000;
 
-const connectToDatabase = async () => {
+export async function POST() {
+  const currentTime = new Date().toLocaleTimeString();
   try {
     await prisma.$connect();
-    console.log("Connection successful at " + new Date().toISOString());
-    retries = 0;
+    return NextResponse.json(
+      { message: `Connected to database at ${currentTime}.` },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error("Connection failed at " + new Date().toISOString(), error);
-    await handleConnectionError();
-  }
-};
-
-const handleConnectionError = async () => {
-  if (retries < maxRetries) {
-    retries += 1;
-    console.log(
-      `Reconnection attempt ${retries} failed at ` + new Date().toISOString()
-    );
-    setTimeout(connectToDatabase, 30000);
-  } else {
-    console.error(
-      "Persistent database connection failure at " + new Date().toISOString()
-    );
-  }
-};
-
-const monitorDatabase = () => {
-  setInterval(connectToDatabase, interval);
-};
-
-export async function GET(request: Request) {
-  console.log("handler called");
-  if (request.method === "GET") {
-    monitorDatabase();
-    return new Response(
-      JSON.stringify({ message: "Database monitoring started" }),
+    return NextResponse.json(
       {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  } else {
-    return new Response(JSON.stringify({ message: "Method not allowed" }), {
-      status: 405,
-      headers: {
-        "Content-Type": "application/json",
+        message: `Database connection error at ${currentTime}: ${error}`,
       },
-    });
+      { status: 500 }
+    );
+  } finally {
+    await prisma.$disconnect();
   }
 }
