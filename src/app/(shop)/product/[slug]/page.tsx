@@ -1,4 +1,4 @@
-export const relativedate = 604800;
+// export const relativedate = 604800;
 
 import { notFound } from "next/navigation";
 import { initialData } from "@/seed/seed";

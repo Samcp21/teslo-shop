@@ -16,3 +16,5 @@ export * from "./ui/pagination/Pagination";
 export * from "./provider/Provider";
 
 export * from "./chatbot/ChatBot";
+
+export * from "./product/product-image/ProductImage";
