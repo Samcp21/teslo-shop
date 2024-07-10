@@ -1,5 +1,5 @@
 export * from "./products/product-grid/ProductGrid";
-export * from "./products/product-grid/ProductGridItem";
+export * from "./products/product-grid/NewProductGridItem";
 
 export * from "./orders/OrderStatus";
 
